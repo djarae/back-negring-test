@@ -2,8 +2,6 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
-
-
 Route::get('/test', function () {
     error_log('Warning para hacer console.log');
     return view('welcome');
