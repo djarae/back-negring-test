@@ -2,9 +2,6 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
-
-
-
 Route::get('/login', function (Request $request)  {
 
   $usuarioEncontrado= "false";
