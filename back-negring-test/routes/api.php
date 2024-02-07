@@ -1,146 +1,56 @@
 <?php
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+  return $request->user();
 });
 
-Route::get('/test', function () {
-    error_log('Warning para hacer console.log');
-    return view('welcome');
-});
-
-Route::get('/testInsert', function () {
-    error_log('Test insert');
-    $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
-    $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
-
-    $sql = "INSERT INTO `usuario`  VALUES (2, 'A','3')";
-
-    if ($conn->query($sql) === TRUE) {
-      echo "New record created successfully";
-    } else {
-      echo "Error: " . $sql . "<br>" . $conn->error;
-    }
-    
-
-
-
-    $conn->close();
-
-    
-
-    return view('welcome');
-
-
-});
-
-Route::post('/login', function (Request $request) {
-  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
-  $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
-
-  $sql = "SELECT id, nombre, contrasena FROM usuario";
-  $result = $conn->query($sql);
-
-  $array = $request->all();
-  $string = implode(",",$array);
-  error_log($string); //Importante guardar un json y tal
-  
-
- 
-
-  if ($result->num_rows > 0) {
-    // output data of each row
-    while($row = $result->fetch_assoc()) {
-      echo "id: " . $row["id"]. " - Name: " . $row["nombre"]. " " . $row["contrasena"]. "<br>";
-      error_log("id: " . $row["id"]. " - Name: " . $row["nombre"]. " " . $row["contrasena"]);
-    }
-  } else {
-    echo "0 results";
-  }
-
-  $conn->close();
-  return  "aaaaaaaaaaaaaaa" ;
-});
-
-Route::get('/login', function (Request $request) {
-  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
-  $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
-
-  $sql = "SELECT id, nombre, contrasena FROM usuario";
-  $result = $conn->query($sql);
-
-  $array = $request->all();
-  $string = implode(",",$array);
-  error_log($string); //Importante guardar un json y tal
-  
-
- 
-
-  if ($result->num_rows > 0) {
-    // output data of each row
-    while($row = $result->fetch_assoc()) {
-      echo "id: " . $row["id"]. " - Name: " . $row["nombre"]. " " . $row["contrasena"]. "<br>";
-      error_log("id: " . $row["id"]. " - Name: " . $row["nombre"]. " " . $row["contrasena"]);
-    }
-  } else {
-    echo "0 results";
-  }
-
-  $conn->close();
-  return  "aaaaaaaaaaaaaaa" ;
-});
-
-Route::get('/loginParametro', function (Request $request)  {
+Route::get('/login', function (Request $request)  {
+  $usuarioEncontrado= "false";
   $url = $request->fullUrl();
-  error_log( $url );//Obtenemos la parametros de la url , con esto se vienen cositas
   $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
   $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
-
-  $sql = "SELECT id, nombre, contrasena FROM usuario";
-  $result = $conn->query($sql);
-
   $array = $request->all();
-  $string = implode(",",$array);
-  error_log($string); //Importante guardar un json y tal
-  
+  $string = implode(",",$array); //Importante guardar un json y tal
+  $ubicacionComa = strpos($string, ",");error_log($ubicacionComa); 
+  $largo = strlen($string);error_log("Largo string");error_log($largo);
+  $ctomar = $largo-$ubicacionComa-1;error_log("a");error_log($ctomar); 
+  $contrasena = substr($string,$ubicacionComa+1,$ctomar); error_log($contrasena); 
+  $usuario=substr($string,0,$ubicacionComa);;error_log("user");error_log($usuario); 
 
- 
-
-  if ($result->num_rows > 0) {
-    // output data of each row
-    while($row = $result->fetch_assoc()) {
-      echo "id: " . $row["id"]. " - Name: " . $row["nombre"]. " " . $row["contrasena"]. "<br>";
-      error_log("id: " . $row["id"]. " - Name: " . $row["nombre"]. " " . $row["contrasena"]);
-    }
-  } else {
-    echo "0 results";
-  }
-
-  $conn->close();
-  return  "aaaaaaaaaaaaaaa" ;
-});
-
-Route::get('/loginAux', function () {
-  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
-  $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
-
-  $sql = "SELECT id, nombre, contrasena FROM usuario";
+  $sql = "SELECT id, nombre, contrasena FROM usuario WHERE nombre={$usuario} and contrasena=$contrasena";
   $result = $conn->query($sql);
 
   if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-      echo "id: " . $row["id"]. " - Name: " . $row["nombre"]. " " . $row["contrasena"]. "<br>";
+      //echo "id: " . $row["id"]. " - Name: " . $row["nombre"]. " " . $row["contrasena"]. "<br>";
       error_log("id: " . $row["id"]. " - Name: " . $row["nombre"]. " " . $row["contrasena"]);
     }
+    $usuarioEncontrado="true";
   } else {
-    echo "0 results";
+    echo "Usuario No encontrado";
+    error_log("Usuario No encontrado");
+    $usuarioEncontrado="false";
+
   }
 
   $conn->close();
-  return  $result ;
+  return  $usuarioEncontrado ;
+  
 });
+
+// Route::get('/ejemplo', [LoginController::class, 'index']);
+
+// Route::get('/ejemplo', 'LoginController@index');
+
+//Route::get('/ejemplo', [EjemploController::class, 'index']);
+
+// Route::get('/ejemplo', 'EjemploController@index');
+
+// Route::get('ejemplo', 'App\Http\Controllers\Api\EjemploController@index');
+
+Route::get('/ejemplo', 'App\Http\Controllers\EjemploController@index');
 
 
