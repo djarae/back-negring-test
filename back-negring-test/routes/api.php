@@ -76,33 +76,29 @@ Route::post('/insertarProducto', function (Request $request)  {
   $idX=substr($string,0,$ubicacionComa);
   error_log("IDX");error_log($idX);
 
-
   $idYExtra = substr($string,$ubicacionComa+1,$ctomar); error_log("id");error_log($idYExtra);
- 
   $ubicacionComa = strpos($idYExtra, ",");
   $id=intval(substr($idYExtra,1,$ubicacionComa-1));error_log("id");error_log($id);
 
   $nombreYExtra = substr($idYExtra,$ubicacionComa+1,$ctomar); error_log("nombreYExtra");error_log($nombreYExtra);
+  $ubicacionComa = strpos($nombreYExtra,",");
+  $nombre=substr($nombreYExtra,0,$ubicacionComa);error_log("name");error_log( $nombre);
+  
+  $detalleYExtra = substr($nombreYExtra,$ubicacionComa+1,$ctomar); error_log("detalleYExtra");error_log($detalleYExtra);
+  $ubicacionComa = strpos($detalleYExtra,",");
+  $detalle=substr($detalleYExtra,0,$ubicacionComa);error_log("detalle");error_log($detalle);
+  
+  $stockYExtra = substr($detalleYExtra,$ubicacionComa+1,$ctomar); error_log("sock");error_log($stockYExtra);
+  $ubicacionComa = strpos($stockYExtra, ",");
+  $stock=intval(substr($stockYExtra,1,$ubicacionComa-1));error_log("stockid");error_log($stock);
 
-
-  //Leemos data desde FRONT-url
-  // $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
-  // $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
-  // //Leemos data de BD  
-  // $sql = "SELECT MAX(id) from producto";
-  // $result = $conn->query($sql);
-  // if ($result->num_rows > 0) {
-  //   // output data of each row
-  //   while($row = $result->fetch_assoc()) {
-  //     error_log("ENMTRO");
-  //      $idNew=$row["MAX(id)"];
-  //      error_log($idNew);
-  //   }
-  // } else {
-  //   echo "Usuario No encontrado";
-  //   error_log("Usuario No encontrado");
-  // }
-  // $conn->close();
+  //bd
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
+  //  $sql = "INSERT INTO `producto`(`id`, `nombre`, `detalle`, `stock`) VALUES ("+$id+",'"+$nombre+"','"+$detalle+"',"+$stock+")";
+  $sql ="INSERT INTO `producto`(`id`, `nombre`, `detalle`, `stock`) VALUES ({$id},{$nombre},{$detalle},{$stock})";
+   $result = $conn->query($sql);
+  $conn->close();
   return   0;
 });
 
