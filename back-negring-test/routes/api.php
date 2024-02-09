@@ -2,15 +2,14 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-  return $request->user();
-});
-
 Route::get('/login', function (Request $request)  {
+  //Leemos data desde FRONT-url
   $usuarioEncontrado= "false";
   $url = $request->fullUrl();
+ 
   $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
   $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
+ 
   $array = $request->all();
   $string = implode(",",$array); //Importante guardar un json y tal
   $ubicacionComa = strpos($string, ",");error_log($ubicacionComa); 
@@ -19,9 +18,9 @@ Route::get('/login', function (Request $request)  {
   $contrasena = substr($string,$ubicacionComa+1,$ctomar); error_log($contrasena); 
   $usuario=substr($string,0,$ubicacionComa);;error_log("user");error_log($usuario); 
 
+  //Leemos data de BD  
   $sql = "SELECT id, nombre, contrasena FROM usuario WHERE nombre={$usuario} and contrasena=$contrasena";
   $result = $conn->query($sql);
-
   if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
@@ -35,22 +34,104 @@ Route::get('/login', function (Request $request)  {
     $usuarioEncontrado="false";
 
   }
-
   $conn->close();
   return  $usuarioEncontrado ;
-  
 });
 
-// Route::get('/ejemplo', [LoginController::class, 'index']);
+Route::get('/getLastProducto', function (Request $request)  {
+  //Leemos data desde FRONT-url
+  $idNew= 0;
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
+  //Leemos data de BD  
+  $sql = "SELECT MAX(id) from producto";
+  $result = $conn->query($sql);
+  if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+      error_log("ENMTRO");
+       $idNew=$row["MAX(id)"];
+       error_log($idNew);
+    }
+  } else {
+    echo "Usuario No encontrado";
+    error_log("Usuario No encontrado");
+  }
+  $conn->close();
+  $idNew= $idNew+1;
+  error_log($idNew);
+  return   $idNew;
+});
 
-// Route::get('/ejemplo', 'LoginController@index');
+Route::post('/insertarProducto', function (Request $request)  {
+  error_log("POST:");
+  //url
+  $url = $request->fullUrl();
+  $array = $request->all();
+  $string = implode(",",$array); //Importante guardar un json y tal
+  error_log("VALUE STRING;:");error_log($string);
+  $ubicacionComa = strpos($string, ",");error_log("ubicOma");error_log($ubicacionComa);
+  $largo = strlen($string);
+  $ctomar = $largo-$ubicacionComa-1;
+  $idX=substr($string,0,$ubicacionComa);
+  error_log("IDX");error_log($idX);
 
-//Route::get('/ejemplo', [EjemploController::class, 'index']);
 
-// Route::get('/ejemplo', 'EjemploController@index');
+  $idYExtra = substr($string,$ubicacionComa+1,$ctomar); error_log("id");error_log($idYExtra);
+ 
+  $ubicacionComa = strpos($idYExtra, ",");
+  $id=intval(substr($idYExtra,1,$ubicacionComa-1));error_log("id");error_log($id);
 
-// Route::get('ejemplo', 'App\Http\Controllers\Api\EjemploController@index');
+  $nombreYExtra = substr($idYExtra,$ubicacionComa+1,$ctomar); error_log("nombreYExtra");error_log($nombreYExtra);
+
+
+  //Leemos data desde FRONT-url
+  // $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  // $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
+  // //Leemos data de BD  
+  // $sql = "SELECT MAX(id) from producto";
+  // $result = $conn->query($sql);
+  // if ($result->num_rows > 0) {
+  //   // output data of each row
+  //   while($row = $result->fetch_assoc()) {
+  //     error_log("ENMTRO");
+  //      $idNew=$row["MAX(id)"];
+  //      error_log($idNew);
+  //   }
+  // } else {
+  //   echo "Usuario No encontrado";
+  //   error_log("Usuario No encontrado");
+  // }
+  // $conn->close();
+  return   0;
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+  return $request->user();
+});
 
 Route::get('/ejemplo', 'App\Http\Controllers\EjemploController@index');
+Route::get('/ejemplo2', 'App\Http\Controllers\Ejemplo2Controller@index');
+
+Route::get('/loginTest', 'App\Http\Controllers\LoginTest@index');
+
+
 
 

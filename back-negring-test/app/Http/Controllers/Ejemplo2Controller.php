@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class EjemploController extends Controller
+class Ejemplo2Controller extends Controller
 {
     public function index() { 
-        return view('ejemplo'); 
+        error_log("aka");
+        return 432578795; 
     } 
 }
