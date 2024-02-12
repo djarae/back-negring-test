@@ -22,9 +22,7 @@ Route::get('/login', function (Request $request)  {
   $sql = "SELECT id, nombre, contrasena FROM usuario WHERE nombre={$usuario} and contrasena=$contrasena";
   $result = $conn->query($sql);
   if ($result->num_rows > 0) {
-    // output data of each row
     while($row = $result->fetch_assoc()) {
-      //echo "id: " . $row["id"]. " - Name: " . $row["nombre"]. " " . $row["contrasena"]. "<br>";
       error_log("id: " . $row["id"]. " - Name: " . $row["nombre"]. " " . $row["contrasena"]);
     }
     $usuarioEncontrado="true";
@@ -36,6 +34,69 @@ Route::get('/login', function (Request $request)  {
   }
   $conn->close();
   return  $usuarioEncontrado ;
+});
+
+Route::get('/getLastUsuario', function (Request $request)  {
+  //Leemos data desde FRONT-url
+  $idNew= 0;
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
+  //Leemos data de BD  
+  $sql = "SELECT MAX(id) from usuario";
+  $result = $conn->query($sql);
+  if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+      error_log("Entro a obtener usuario");
+       $idNew=$row["MAX(id)"];
+       error_log($idNew);
+    }
+  } else {
+    echo "Usuario No encontrado";
+    error_log("Usuario No encontrado");
+  }
+  $conn->close();
+  $idNew= $idNew+1;
+  error_log($idNew);
+  return   $idNew;
+});
+
+Route::post('/insertarUsuario', function (Request $request)  {
+  error_log("POST:");
+  //url
+  $url = $request->fullUrl();
+  $array = $request->all();
+  $string = implode(",",$array); //Importante guardar un json y tal
+  $ubicacionComa = strpos($string, ",");
+  $largo = strlen($string);
+  $ctomar = $largo-$ubicacionComa-1;
+
+  $idYExtra = substr($string,$ubicacionComa+1,$ctomar); error_log("idyextra");error_log($idYExtra);
+  $ubicacionComa = strpos($idYExtra, ",");
+  $id=intval(substr($idYExtra,1,$ubicacionComa-1));error_log("id");error_log($id);
+
+  $usuarioYExtra = substr($idYExtra,$ubicacionComa+1,$ctomar); error_log("usuarioYExtra");error_log($usuarioYExtra);
+  $ubicacionComa = strpos($usuarioYExtra,",");
+  $usuario=substr($usuarioYExtra,0,$ubicacionComa);error_log("name");error_log($usuario);
+  
+  $correoYExtra = substr($usuarioYExtra,$ubicacionComa+1,$ctomar); error_log("correoYExtra");error_log($correoYExtra);
+  $ubicacionComa = strpos($correoYExtra,",");
+  $correo=substr($correoYExtra,0,$ubicacionComa);error_log("correo");error_log($correo);
+  
+  $cargoYExtra = substr($correoYExtra,$ubicacionComa+1,$ctomar); error_log("cargo y extr");error_log($cargoYExtra);
+  $ubicacionComa = strpos($cargoYExtra, ",");error_log("ubicComa");error_log($ubicacionComa);
+  $cargo=substr($cargoYExtra,0,$ubicacionComa);error_log("cargoid");error_log($cargo);
+
+  $largo=(strlen($cargoYExtra))- ($ubicacionComa)-1 ;
+  $contrasena=substr($cargoYExtra,$ubicacionComa+1,$largo);error_log("cont");error_log($contrasena);
+
+  //bd
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
+  $sql ="INSERT INTO `usuario`(`id`, `nombre`, `correo`, `cargo`, `contrasena`,`visibilidad`) VALUES ({$id},{$usuario},{$correo},{$cargo},{$contrasena},0)";
+   $result = $conn->query($sql);
+  $conn->close();
+  return   0;
 });
 
 Route::get('/getLastProducto', function (Request $request)  {
@@ -63,13 +124,39 @@ Route::get('/getLastProducto', function (Request $request)  {
   return   $idNew;
 });
 
+Route::get('/getDetailProducto', function (Request $request)  {
+  //URL
+  error_log("entro a get detalle");
+  $url = $request->fullUrl();
+  $array = $request->all();
+  $string = implode(",",$array); error_log("sring:");error_log($string);
+  $id=intval(substr(  $string,1, strlen($string)-1));error_log("id final");error_log($id);
+
+  //BD
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
+  $sql="SELECT * FROM producto WHERE  `id`={$id}";
+
+  $result = $conn->query($sql);
+  if ($result->num_rows > 0) {
+    $datax =array(); 
+    while($row = $result->fetch_assoc()) {
+        array_push($datax, array('detalle'=> $row['detalle']));
+    }
+    } else {
+      error_log("Error");
+    }
+
+    $conn->close();
+    error_log( json_encode($datax) );
+    return Response::json(array('datax' => $datax));
+  
+});
+
 Route::get('/getListadoProductos', function (Request $request)  {
   //Leemos data desde FRONT-url
   $url = $request->fullUrl();
   $array = $request->all();
-
-
-
 
   $string = implode(",",$array);error_log("string");error_log($string); //Importante guardar un json y tal
   $ubicacionComa = strpos($string, ",");
@@ -110,7 +197,7 @@ Route::get('/getListadoProductos', function (Request $request)  {
   else{
   $stockAux="'%{$stockAux}%'";
   };
-  $sql= "SELECT * FROM `producto` WHERE nombre LIKE {$nombreAux} and stock LIKE {$stockAux} ";
+  $sql= "SELECT * FROM `producto` WHERE nombre LIKE {$nombreAux} and stock LIKE {$stockAux} and visibilidad=0";
   
 
   $result = $conn->query($sql);
@@ -178,6 +265,7 @@ Route::post('/insertarProducto', function (Request $request)  {
 
 Route::put('/updateProducto', function (Request $request)  {
   //url
+  error_log("entro a update");
   $url = $request->fullUrl();
   $array = $request->all();
   $string = implode(",",$array); 
@@ -211,6 +299,29 @@ Route::put('/updateProducto', function (Request $request)  {
   $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
   // $sql ="INSERT INTO `producto`(`id`, `nombre`, `detalle`, `stock`) VALUES ({$id},{$nombre},{$detalle},{$stock})";
   $sql="UPDATE `producto` SET `nombre`={$nombre},`detalle`={$detalle},`stock`={$stock} WHERE id={$id}";
+  $result = $conn->query($sql);
+  $conn->close();
+  return   0;
+});
+
+Route::put('/deleteProducto', function (Request $request)  {
+  //url
+  error_log("entro a deleted");
+  $url = $request->fullUrl();
+  $array = $request->all();
+  $string = implode(",",$array); 
+  $ubicacionComa = strpos($string, ",");
+  $largo = strlen($string);
+  $ctomar = $largo-$ubicacionComa-1;
+
+  $idYExtra = substr($string,$ubicacionComa+1,$ctomar); error_log("id");error_log($idYExtra);
+  $ubicacionComa = strpos($idYExtra, ",");
+  $id=intval(substr($idYExtra,1,$ubicacionComa-1));error_log("id");error_log($id);
+
+  //bd
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
+  $sql="UPDATE `producto` SET `visibilidad`=1 WHERE id={$id}";
   $result = $conn->query($sql);
   $conn->close();
   return   0;
