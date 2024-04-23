@@ -27,8 +27,8 @@ Route::get('/login', function (Request $request)  {
     }
     $usuarioEncontrado="true";
   } else {
-    echo "Usuario No encontrado";
-    error_log("Usuario No encontrado");
+    // echo "Usuario No encontrado";
+    // error_log("Usuario No encontrado");
     $usuarioEncontrado="false";
 
   }
