@@ -25,7 +25,7 @@ class LoginTest extends Controller
         error_log("usuario:");error_log($usuario);
         
         //LEEMOS DATA DESDE BD
-        $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+        $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "db-productos";
         $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
         // $sql = "SELECT id, nombre, contrasena FROM usuario WHERE nombre={$usuario} and contrasena=$contrasena";
         // $result = $conn->query($sql);

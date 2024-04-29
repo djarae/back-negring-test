@@ -7,7 +7,7 @@ Route::get('/login', function (Request $request)  {
   $usuarioEncontrado= "false";
   $url = $request->fullUrl();
  
-  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "db-productos";
   $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
  
   $array = $request->all();
@@ -39,7 +39,7 @@ Route::get('/login', function (Request $request)  {
 Route::get('/getLastUsuario', function (Request $request)  {
   //Leemos data desde FRONT-url
   $idNew= 0;
-  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "db-productos";
   $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
   //Leemos data de BD  
   $sql = "SELECT MAX(id) from usuario";
@@ -91,7 +91,7 @@ Route::post('/insertarUsuario', function (Request $request)  {
   $contrasena=substr($cargoYExtra,$ubicacionComa+1,$largo);error_log("cont");error_log($contrasena);
 
   //bd
-  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "db-productos";
   $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
   $sql ="INSERT INTO `usuario`(`id`, `nombre`, `correo`, `cargo`, `contrasena`,`visibilidad`) VALUES ({$id},{$usuario},{$correo},{$cargo},{$contrasena},0)";
    $result = $conn->query($sql);
@@ -102,7 +102,7 @@ Route::post('/insertarUsuario', function (Request $request)  {
 Route::get('/getLastProducto', function (Request $request)  {
   //Leemos data desde FRONT-url
   $idNew= 0;
-  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "db-productos";
   $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
   //Leemos data de BD  
   $sql = "SELECT MAX(id) from producto";
@@ -133,7 +133,7 @@ Route::get('/getDetailProducto', function (Request $request)  {
   $id=intval(substr(  $string,1, strlen($string)-1));error_log("id final");error_log($id);
 
   //BD
-  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "db-productos";
   $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
   $sql="SELECT * FROM producto WHERE  `id`={$id}";
 
@@ -178,7 +178,7 @@ Route::get('/getListadoProductos', function (Request $request)  {
 
 
 
-  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "db-productos";
   $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
  
   //Leemos data de BD  
@@ -254,7 +254,7 @@ Route::post('/insertarProducto', function (Request $request)  {
   $stock=intval(substr($stockYExtra,1,$ubicacionComa-1));error_log("stockid");error_log($stock);
 
   //bd
-  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "db-productos";
   $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
   //  $sql = "INSERT INTO `producto`(`id`, `nombre`, `detalle`, `stock`) VALUES ("+$id+",'"+$nombre+"','"+$detalle+"',"+$stock+")";
   $sql ="INSERT INTO `producto`(`id`, `nombre`, `detalle`, `stock`) VALUES ({$id},{$nombre},{$detalle},{$stock})";
@@ -295,7 +295,7 @@ Route::put('/updateProducto', function (Request $request)  {
   if ($stock=="") {$stock="`stock`";}
 
   //bd
-  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "db-productos";
   $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
   // $sql ="INSERT INTO `producto`(`id`, `nombre`, `detalle`, `stock`) VALUES ({$id},{$nombre},{$detalle},{$stock})";
   $sql="UPDATE `producto` SET `nombre`={$nombre},`detalle`={$detalle},`stock`={$stock} WHERE id={$id}";
@@ -319,7 +319,7 @@ Route::put('/deleteProducto', function (Request $request)  {
   $id=intval(substr($idYExtra,1,$ubicacionComa-1));error_log("id");error_log($id);
 
   //bd
-  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "negring-test";
+  $dbhost = "127.0.0.1";$dbuser = "root";$dbpass = "";$dbname = "db-productos";
   $conn = new mysqli($dbhost, $dbuser, $dbpass,$dbname) or die("Connect failed: %s\n". $conn -> error);
   $sql="UPDATE `producto` SET `visibilidad`=1 WHERE id={$id}";
   $result = $conn->query($sql);
