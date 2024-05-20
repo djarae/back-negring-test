@@ -2,6 +2,18 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\Api\ProductoController;
+
+Route::controller(ProductoController::class)->group
+(
+  function ()
+{
+  Route::get('/products','index');
+}
+);
+
+
+
 Route::get('/login', function (Request $request)  {
   //Leemos data desde FRONT-url
   $usuarioEncontrado= "false";
