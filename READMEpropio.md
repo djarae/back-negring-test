@@ -9,3 +9,8 @@ https://www.youtube.com/watch?v=dyQLsQm1EtI&list=PLlwJCKng02GTT-AKYmZoFHpCTrgCrH
 
 # Integracion:
 App integrada con mi app ejercicio_react_productos
+
+
+# Comandos
+composer install 
+php artisan serve
