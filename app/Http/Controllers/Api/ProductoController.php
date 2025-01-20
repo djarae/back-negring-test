@@ -1,28 +1,37 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
+use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+
+
 class ProductoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
        error_log("Funciona controller y wea");
+      
        return 'HOLA';
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+
+        error_log("rquest es :A ");
+        error_log($request);
+
+        $data = array(
+            'name' => 'John Doe',
+            'age' => 25,
+            'city' => 'Example City'
+        );
+
+        return  $data;
     }
+
+
 
     /**
      * Display the specified resource.

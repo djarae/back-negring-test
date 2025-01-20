@@ -1,7 +1,9 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
+use Illuminate\Http\Response;
 use App\Http\Controllers\Api\ProductoController;
 
 Route::controller(ProductoController::class)->group
@@ -9,6 +11,8 @@ Route::controller(ProductoController::class)->group
   function ()
 {
   Route::get('/products','index');
+  Route::post('/products','store');
+
 }
 );
 
@@ -47,7 +51,6 @@ Route::get('/login', function (Request $request)  {
   $conn->close();
   return  $usuarioEncontrado ;
 });
-
 Route::get('/getLastUsuario', function (Request $request)  {
   //Leemos data desde FRONT-url
   $idNew= 0;
@@ -72,7 +75,6 @@ Route::get('/getLastUsuario', function (Request $request)  {
   error_log($idNew);
   return   $idNew;
 });
-
 Route::post('/insertarUsuario', function (Request $request)  {
   error_log("POST:");
   //url
@@ -110,7 +112,6 @@ Route::post('/insertarUsuario', function (Request $request)  {
   $conn->close();
   return   0;
 });
-
 Route::get('/getLastProducto', function (Request $request)  {
   //Leemos data desde FRONT-url
   $idNew= 0;
@@ -135,7 +136,6 @@ Route::get('/getLastProducto', function (Request $request)  {
   error_log($idNew);
   return   $idNew;
 });
-
 Route::get('/getDetailProducto', function (Request $request)  {
   //URL
   error_log("entro a get detalle");
@@ -164,7 +164,6 @@ Route::get('/getDetailProducto', function (Request $request)  {
     return Response::json(array('datax' => $datax));
   
 });
-
 Route::get('/getListadoProductos', function (Request $request)  {
   //Leemos data desde FRONT-url
   $url = $request->fullUrl();
@@ -238,7 +237,6 @@ Route::get('/getListadoProductos', function (Request $request)  {
   return Response::json(array('datax' => $datax));
 
 });
-
 Route::post('/insertarProducto', function (Request $request)  {
   error_log("POST:");
   //url
@@ -274,7 +272,6 @@ Route::post('/insertarProducto', function (Request $request)  {
   $conn->close();
   return   0;
 });
-
 Route::put('/updateProducto', function (Request $request)  {
   //url
   error_log("entro a update");
@@ -315,7 +312,6 @@ Route::put('/updateProducto', function (Request $request)  {
   $conn->close();
   return   0;
 });
-
 Route::put('/deleteProducto', function (Request $request)  {
   //url
   error_log("entro a deleted");
